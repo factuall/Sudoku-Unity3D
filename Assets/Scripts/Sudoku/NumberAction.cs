@@ -24,4 +24,9 @@ public class NumberAction : MonoBehaviour
     {
     }
 
+    public void NumberPressed()
+    {
+        Manager.NumberPressed(id);
+    }
+
 }

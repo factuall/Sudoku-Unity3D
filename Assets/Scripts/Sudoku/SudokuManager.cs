@@ -17,10 +17,33 @@ public class SudokuManager : MonoBehaviour
 
     public int currentField = 0;
 
+    int[,] Solve = new int[9, 9];
+
     // Start is called before the first frame update
     void Start()
     {
-        int[] level = Generator();
+        int[,] Solution = Generator();
+        Solve = Solution;
+        bool unsolving = true;
+        while (unsolving)
+        {
+            int[] delX = RandomOrder9();
+            int[] delY = RandomOrder9();
+            for (int i = 0; i < 9; i++)
+            {
+
+                Solve[delX[i] - 1, delY[i] - 1] = 0;
+            }
+            int notSolved = 0;
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (Solve[x, y] == 0) notSolved++;
+                }
+            }
+            if (notSolved > 38) unsolving = false;
+        }
 
         for (int i = 0; i < 81; i++)
         {
@@ -33,7 +56,7 @@ public class SudokuManager : MonoBehaviour
             GameFields[i] = Instantiate(GFPrefab, Grid).GetComponent<NumberField>();
             GameFields[i].Manager = this;
             GameFields[i].id = i;
-            GameFields[i].content = level[i];
+            //GameFields[i].content = Solution[i];
         }
 
         
@@ -42,7 +65,13 @@ public class SudokuManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        for (int updateY = 0; updateY < 9; updateY++)
+        {
+            for (int updateX = 0; updateX < 9; updateX++)
+            {
+                GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
+            }
+        }
     }
 
     int SetXY(int x, int y)
@@ -57,7 +86,19 @@ public class SudokuManager : MonoBehaviour
         GameFields[id].FieldImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
     }
 
-    int[] Generator()
+    public void NumberPressed(int id)
+    {
+        for (int y = 0; y < 9; y++)
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                if (y * 9 + x == currentField) Solve[x, y] = id + 1; 
+            }
+        }
+     
+    }
+
+    int[,] Generator()
     {
         int[] Fields = new int[81];
         int[] FirstRow = RandomOrder9();
@@ -74,7 +115,15 @@ public class SudokuManager : MonoBehaviour
         {
             Array.Copy(RestRows[RowsOrder[row]-1], 0, Fields, row * 9, 9);
         }
-        return Fields;
+        int[,] Solution = new int[9, 9];
+        for (int y = 0; y < 9; y++)
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                Solution[x, y] = Fields[y * 9 + x];
+            }
+        }
+        return Solution;
     }
 
     int[] RandomOrder9()
