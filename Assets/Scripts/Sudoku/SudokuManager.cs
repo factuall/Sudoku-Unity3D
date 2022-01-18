@@ -15,15 +15,15 @@ public class SudokuManager : MonoBehaviour
     public NumberAction[] NumberSelect = new NumberAction[9];
     public GameObject NSPrefab;
 
-    public int currentField = 0;
+    public int currentField = -1;
 
     int[,] Solve = new int[9, 9];
-
+    int[,] Solution = new int[9, 9];
     // Start is called before the first frame update
     void Start()
     {
-        int[,] Solution = Generator();
-        Solve = Solution;
+        Solution = Generator();
+        Solve = Solution.Clone() as int[,];
         bool unsolving = true;
         while (unsolving)
         {
@@ -42,9 +42,10 @@ public class SudokuManager : MonoBehaviour
                     if (Solve[x, y] == 0) notSolved++;
                 }
             }
-            if (notSolved > 38) unsolving = false;
+            if (notSolved > 30) unsolving = false;
+        
         }
-
+        
         for (int i = 0; i < 81; i++)
         {
             if(i < 9)
@@ -79,11 +80,24 @@ public class SudokuManager : MonoBehaviour
         return x + (y * 9);
     }
 
+    int undoBuffer = -1;
+
     public void FieldPressed(int id)
-    {
-        GameFields[currentField].FieldImage.color = new Color(1f, 1f, 1f, 1f);
+    {   
+        
+        if(currentField != -1)
+        {
+            GameFields[currentField].FieldImage.color = new Color(1f, 1f, 1f, 1f);
+            if (Solve[currentField % 9, currentField / 9] == Solution[currentField % 9, currentField / 9]) GameFields[currentField].FieldText.color = Color.green;
+        }
+        if (id != -1)
+        {
+            GameFields[id].FieldImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            undoBuffer = Solve[id % 9, id / 9];
+        }
+            
         currentField = id;
-        GameFields[id].FieldImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+        
     }
 
     public void NumberPressed(int id)
@@ -98,6 +112,17 @@ public class SudokuManager : MonoBehaviour
      
     }
 
+    public void CancelPressed()
+    {
+        if(currentField != -1 && undoBuffer != -1)
+        {
+            GameFields[currentField].FieldImage.color = new Color(1f, 1f, 1f, 1f);
+            Solve[currentField % 9, currentField / 9] = undoBuffer;
+            currentField = -1;
+            undoBuffer = -1;
+        }
+    }
+
     int[,] Generator()
     {
         int[] Fields = new int[81];
@@ -105,25 +130,37 @@ public class SudokuManager : MonoBehaviour
         Array.Copy(FirstRow, Fields, 9);
         int[] CurrentShift = FirstRow;
         int[][] RestRows = new int[9][];
-        for (int row = 0; row < 9; row++)
+        for (int row = 1; row < 9; row++)
         {
-            CurrentShift = ShiftArray(CurrentShift);
+            if(row != 0 && row != 3 && row != 6)
+            {
+                CurrentShift = ShiftArray(CurrentShift);
+                CurrentShift = ShiftArray(CurrentShift);
+                CurrentShift = ShiftArray(CurrentShift);
+            }
+            else
+            {
+                CurrentShift = ShiftArray(CurrentShift);
+
+            }
+            
             RestRows[row] = CurrentShift;
         }
-        int[] RowsOrder = RandomOrder9();
+        RestRows[0] = FirstRow;
+        int[] RowsOrder = {6,7,8,3,4,5,0,1,2};
         for (int row = 0; row < 9; row++)
         {
-            Array.Copy(RestRows[RowsOrder[row]-1], 0, Fields, row * 9, 9);
+            Array.Copy(RestRows[RowsOrder[row]], 0, Fields, row * 9, 9);
         }
-        int[,] Solution = new int[9, 9];
+        int[,] sol = new int[9, 9];
         for (int y = 0; y < 9; y++)
         {
             for (int x = 0; x < 9; x++)
             {
-                Solution[x, y] = Fields[y * 9 + x];
+                sol[x, y] = Fields[y * 9 + x];
             }
         }
-        return Solution;
+        return sol;
     }
 
     int[] RandomOrder9()
