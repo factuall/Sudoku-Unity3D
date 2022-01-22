@@ -15,10 +15,15 @@ public class SudokuManager : MonoBehaviour
     public NumberAction[] NumberSelect = new NumberAction[9];
     public GameObject NSPrefab;
 
+    Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+    Color normalColor = new Color(1f, 1f, 1f, 155f / 255f);
+
     public int currentField = -1;
 
     int[,] Solve = new int[9, 9];
     int[,] Solution = new int[9, 9];
+    int[,] StartingSolved = new int[9, 9];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +50,7 @@ public class SudokuManager : MonoBehaviour
             if (notSolved > 30) unsolving = false;
         
         }
-        
+        StartingSolved = Solve.Clone() as int[,];
         for (int i = 0; i < 81; i++)
         {
             if(i < 9)
@@ -73,6 +78,15 @@ public class SudokuManager : MonoBehaviour
                 GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
             }
         }
+        if (currentField != 0)
+        {
+            HighlightField(true, currentField % 9, currentField / 9);
+        }
+        else
+        {
+            HighlightField(false, currentField % 9, currentField / 9);
+        }
+
     }
 
     int SetXY(int x, int y)
@@ -87,17 +101,32 @@ public class SudokuManager : MonoBehaviour
         
         if(currentField != -1)
         {
-            GameFields[currentField].FieldImage.color = new Color(1f, 1f, 1f, 1f);
-            if (Solve[currentField % 9, currentField / 9] == Solution[currentField % 9, currentField / 9]) GameFields[currentField].FieldText.color = Color.green;
+            if (Solve[currentField % 9, currentField / 9] == Solution[currentField % 9, currentField / 9] &&
+                Solve[currentField % 9, currentField / 9] != StartingSolved[currentField % 9, currentField / 9]) GameFields[currentField].FieldText.color = Color.green;
+            
         }
         if (id != -1)
         {
-            GameFields[id].FieldImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            HighlightField(false, currentField % 9, currentField / 9);
             undoBuffer = Solve[id % 9, id / 9];
         }
             
         currentField = id;
         
+    }
+
+    public void HighlightField(bool newHighlight, int x, int y)
+    {
+        GameFields[y * 9 + x].FieldImage.color = newHighlight ? highlitedColor : normalColor;
+        int squareX = x / 3, squareY = y / 3;
+        for (int id = 0; id < 81; id++)
+        {
+            
+            if(id % 9 == x ||
+                id / 9 == y ||
+                ((id % 9) / 3 == squareX&&(id / 9) / 3 == squareY)) GameFields[id].FieldImage.CrossFadeColor(newHighlight ? highlitedColor : normalColor, 0.1f, true, true);
+
+        }
     }
 
     public void NumberPressed(int id)
