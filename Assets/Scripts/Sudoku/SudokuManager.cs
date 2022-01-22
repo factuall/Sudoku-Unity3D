@@ -78,13 +78,9 @@ public class SudokuManager : MonoBehaviour
                 GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
             }
         }
-        if (currentField != 0)
+        if (currentField != -1)
         {
             HighlightField(true, currentField % 9, currentField / 9);
-        }
-        else
-        {
-            HighlightField(false, currentField % 9, currentField / 9);
         }
 
     }
@@ -107,7 +103,7 @@ public class SudokuManager : MonoBehaviour
         }
         if (id != -1)
         {
-            HighlightField(false, currentField % 9, currentField / 9);
+            if(currentField != -1) HighlightField(false, currentField % 9, currentField / 9);
             undoBuffer = Solve[id % 9, id / 9];
         }
             
@@ -145,7 +141,7 @@ public class SudokuManager : MonoBehaviour
     {
         if(currentField != -1 && undoBuffer != -1)
         {
-            GameFields[currentField].FieldImage.color = new Color(1f, 1f, 1f, 1f);
+            HighlightField(false, currentField % 9, currentField / 9);
             Solve[currentField % 9, currentField / 9] = undoBuffer;
             currentField = -1;
             undoBuffer = -1;
