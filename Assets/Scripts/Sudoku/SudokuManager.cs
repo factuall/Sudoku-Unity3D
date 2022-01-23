@@ -16,7 +16,13 @@ public class SudokuManager : MonoBehaviour
     public GameObject NSPrefab;
 
     Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+    Color highlitedNumberColor = new Color(0.6f, 0.75f, 0.75f, 1f);
     Color normalColor = new Color(1f, 1f, 1f, 155f / 255f);
+
+    Color fontNormalColor = Color.black;
+    Color fontGhostColor = new Color(0.64f, 0.64f, 0.64f, 1f);
+    Color fontHighlitedColor = new Color(0.5f, 0f, 0.5f, 1f);
+    Color fontCorrectAnswer = new Color(0.2f, 0.55f, 0.2f, 1f);
 
     public int currentField = -1;
 
@@ -75,14 +81,36 @@ public class SudokuManager : MonoBehaviour
         {
             for (int updateX = 0; updateX < 9; updateX++)
             {
-                GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
+                
+                if(GameFields[updateY * 9 + updateX].ghost)
+                {
+                    GameFields[updateY * 9 + updateX].FieldText.color = fontGhostColor;
+                }
+                else
+                {
+                    GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
+                    GameFields[updateY * 9 + updateX].FieldText.color = (Solve[updateX, updateY] == Solution[updateX, updateY] &&
+                        Solve[updateX, updateY] != StartingSolved[updateX, updateY])
+                            ? fontCorrectAnswer  : fontNormalColor;
+                    GameFields[updateY * 9 + updateX].FieldImage.color = normalColor;
+                }
+                
             }
         }
         if (currentField != -1)
         {
             HighlightField(true, currentField % 9, currentField / 9);
         }
+        for (int id = 0; id < 81; id++)
+        {
+            if (currentField != -1 && GameFields[id].content == highlightNumberBuffer && highlightNumberBuffer != 0)
+            {
+                GameFields[id].FieldImage.color = highlitedNumberColor;
+                GameFields[id].FieldText.color = fontHighlitedColor;
 
+            }   
+            
+        }
     }
 
     int SetXY(int x, int y)
@@ -97,13 +125,23 @@ public class SudokuManager : MonoBehaviour
         
         if(currentField != -1)
         {
-            if (Solve[currentField % 9, currentField / 9] == Solution[currentField % 9, currentField / 9] &&
-                Solve[currentField % 9, currentField / 9] != StartingSolved[currentField % 9, currentField / 9]) GameFields[currentField].FieldText.color = Color.green;
+
+            HighlightField(false, currentField % 9, currentField / 9);
+            GameFields[currentField].ghost = false;
             
         }
         if (id != -1)
         {
-            if(currentField != -1) HighlightField(false, currentField % 9, currentField / 9);
+
+            highlightNumberBuffer = GameFields[id].content;
+            if (currentField != -1)
+            {
+                if (GameFields[currentField].ghost)
+                {
+                    Solve[currentField % 9, currentField / 9] = GameFields[currentField].content;
+                    GameFields[currentField].ghost = false;
+                }
+            }
             undoBuffer = Solve[id % 9, id / 9];
         }
             
@@ -125,13 +163,17 @@ public class SudokuManager : MonoBehaviour
         }
     }
 
+
+    int highlightNumberBuffer = -1;
     public void NumberPressed(int id)
     {
         for (int y = 0; y < 9; y++)
         {
             for (int x = 0; x < 9; x++)
-            {
-                if (y * 9 + x == currentField) Solve[x, y] = id + 1; 
+            { 
+                if (y * 9 + x == currentField && !GameFields[currentField].ghost) Solve[x, y] = id + 1;
+                else if(currentField != -1) GameFields[currentField].content = id + 1;
+                highlightNumberBuffer = id+1;
             }
         }
      
@@ -146,6 +188,14 @@ public class SudokuManager : MonoBehaviour
             currentField = -1;
             undoBuffer = -1;
         }
+    }
+
+    public void GhostPressed()
+    {
+        int prevField = currentField;
+        FieldPressed(-1);
+        GameFields[prevField].ghost = true;
+
     }
 
     int[,] Generator()
@@ -218,5 +268,6 @@ public class SudokuManager : MonoBehaviour
         int[] result = Array.ConvertAll(shifted, x => x ?? 0);
         return result;
     }
+
 
 }

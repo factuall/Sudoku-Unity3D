@@ -7,6 +7,7 @@ public class NumberField : MonoBehaviour
 {
 
     public int content = 0;
+    public bool ghost = false;
     public int id = 0;
     public SudokuManager Manager;
     public Text FieldText;
@@ -25,8 +26,12 @@ public class NumberField : MonoBehaviour
     {
         if (content != 0)
             FieldText.text = content.ToString();
-        else
-            FieldText.text = "";
+        else 
+        { 
+            FieldText.text = "";  
+            
+        }
+            
     }
 
     public void FieldPressed()
