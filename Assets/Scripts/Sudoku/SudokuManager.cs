@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SudokuManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class SudokuManager : MonoBehaviour
     Color fontCorrectAnswer = new Color(0.2f, 0.55f, 0.2f, 1f);
 
     public int currentField = -1;
+
+    int difficulty = SudokuLauncher.launchDifficulty;
 
     int[,] Solve = new int[9, 9];
     int[,] Solution = new int[9, 9];
@@ -53,7 +56,7 @@ public class SudokuManager : MonoBehaviour
                     if (Solve[x, y] == 0) notSolved++;
                 }
             }
-            if (notSolved > 30) unsolving = false;
+            if (notSolved > difficulty) unsolving = false;
         
         }
         StartingSolved = Solve.Clone() as int[,];
@@ -70,7 +73,6 @@ public class SudokuManager : MonoBehaviour
             GameFields[i].id = i;
             //GameFields[i].content = Solution[i];
         }
-
         
     }
 
@@ -151,6 +153,7 @@ public class SudokuManager : MonoBehaviour
 
     public void HighlightField(bool newHighlight, int x, int y)
     {
+
         GameFields[y * 9 + x].FieldImage.color = newHighlight ? highlitedColor : normalColor;
         int squareX = x / 3, squareY = y / 3;
         for (int id = 0; id < 81; id++)
@@ -269,5 +272,9 @@ public class SudokuManager : MonoBehaviour
         return result;
     }
 
+    public void QuitSudoku()
+    {
+        SceneManager.LoadScene("Start"); 
+    }
 
 }
