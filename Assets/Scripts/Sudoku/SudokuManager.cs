@@ -33,6 +33,8 @@ public class SudokuManager : MonoBehaviour
     int[,] Solution = new int[9, 9];
     int[,] StartingSolved = new int[9, 9];
 
+    bool gameReady = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,6 +81,8 @@ public class SudokuManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        gameReady = !(GameFields[0].FieldText == null);
+        if (!gameReady) return; //update fields appearance 
         for (int updateY = 0; updateY < 9; updateY++)
         {
             for (int updateX = 0; updateX < 9; updateX++)
@@ -91,6 +95,7 @@ public class SudokuManager : MonoBehaviour
                 else
                 {
                     GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
+                    GameFields[updateY * 9 + updateX].FieldText.color = Color.black;
                     GameFields[updateY * 9 + updateX].FieldText.color = (Solve[updateX, updateY] == Solution[updateX, updateY] &&
                         Solve[updateX, updateY] != StartingSolved[updateX, updateY])
                             ? fontCorrectAnswer  : fontNormalColor;
