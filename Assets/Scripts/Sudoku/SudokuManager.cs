@@ -41,24 +41,28 @@ public class SudokuManager : MonoBehaviour
         Solution = Generator();
         Solve = Solution.Clone() as int[,];
         bool unsolving = true;
+        int notSolved = 0;
         while (unsolving)
         {
             int[] delX = RandomOrder9();
             int[] delY = RandomOrder9();
             for (int i = 0; i < 9; i++)
             {
-
                 Solve[delX[i] - 1, delY[i] - 1] = 0;
-            }
-            int notSolved = 0;
-            for (int y = 0; y < 9; y++)
-            {
-                for (int x = 0; x < 9; x++)
+                notSolved = 0;
+                for (int y = 0; y < 9; y++)
                 {
-                    if (Solve[x, y] == 0) notSolved++;
+                    for (int x = 0; x < 9; x++)
+                    {
+                        if (Solve[x, y] == 0) notSolved++;
+                    }
+                }
+                if (notSolved > difficulty - 1) 
+                {
+                    unsolving = false;
+                    break;
                 }
             }
-            if (notSolved > difficulty) unsolving = false;
         
         }
         StartingSolved = Solve.Clone() as int[,];

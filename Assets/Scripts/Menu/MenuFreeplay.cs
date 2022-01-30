@@ -1,20 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SudokuLauncher : MonoBehaviour
+public class MenuFreeplay : MonoBehaviour
 {
-
-    public static int launchDifficulty = 30;
-
-    
+    public Slider difficultySlider;
+    public Text difficultyDisplay;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -23,9 +20,5 @@ public class SudokuLauncher : MonoBehaviour
         
     }
 
-    public void LaunchSudoku()
-    {
-        SceneManager.LoadScene("Sudoku");
-    }
-
+    
 }
