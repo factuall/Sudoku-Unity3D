@@ -23,8 +23,9 @@ public class SudokuLauncher : MonoBehaviour
         
     }
 
-    public void LaunchSudoku()
+    public void LaunchSudoku(int difficulty)
     {
+        launchDifficulty = difficulty;
         SceneManager.LoadScene("Sudoku");
     }
 
