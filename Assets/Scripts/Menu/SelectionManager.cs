@@ -8,11 +8,15 @@ public class SelectionManager : MonoBehaviour
     public GridLayoutGroup menusGrid;
     public MenuPage[] menuPages;
     public Canvas mainCanvas;
-    int page = 0;
+    public RectTransform menuRect;
+    public RectTransform mainRect;
+    public int page = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        menuRect = GetComponent<RectTransform>();
+        mainRect = mainCanvas.GetComponent<RectTransform>();
         menusGrid = GetComponent<GridLayoutGroup>();
         menuPages = GetComponentsInChildren<MenuPage>();
     }
@@ -20,7 +24,7 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float newX = ((page * Screen.width) - transform.position.x) * Time.deltaTime;
-        transform.position = new Vector3(mainCanvas.transform.position.x + newX, mainCanvas.transform.position.y, 0);
+        float newX = (menuRect.anchoredPosition.x - ((page * -1) * menuRect.rect.width)) * Time.deltaTime * 8;
+        menuRect.anchoredPosition = new Vector2(menuRect.anchoredPosition.x + (0 - newX), 0);
     }
 }
