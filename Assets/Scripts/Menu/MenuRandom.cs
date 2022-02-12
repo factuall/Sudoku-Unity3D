@@ -17,7 +17,7 @@ public class MenuRandom : MonoBehaviour
         
     }
 
-    public void startFreeplay()
+    public void startRandomplay()
     {
         launcher.LaunchSudoku(Mathf.RoundToInt(Random.Range(10,70)));
     }

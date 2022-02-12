@@ -8,6 +8,10 @@ using UnityEngine.SceneManagement;
 public class SudokuManager : MonoBehaviour
 {
 
+    public static float playTime = 0;
+    public static int playScore = 0;
+    public static int playMistakes = 0;
+
     public RectTransform Grid;
     public NumberField[] GameFields = new NumberField[81];
     public GameObject GFPrefab;
@@ -38,6 +42,7 @@ public class SudokuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playTime = 0;
         Solution = Generator();
         Solve = Solution.Clone() as int[,];
         bool unsolving = true;
@@ -87,6 +92,7 @@ public class SudokuManager : MonoBehaviour
     {
         gameReady = !(GameFields[0].FieldText == null);
         if (!gameReady) return; //update fields appearance 
+        playTime += Time.deltaTime;
         for (int updateY = 0; updateY < 9; updateY++)
         {
             for (int updateX = 0; updateX < 9; updateX++)
@@ -157,7 +163,15 @@ public class SudokuManager : MonoBehaviour
         }
             
         currentField = id;
-        
+
+        //solved check
+        for (int i = 0; i < 81; i++)
+        {
+            if (Solve[i % 9, i / 9] != Solution[i % 9, i / 9]) return;
+        }
+
+        SceneManager.LoadScene("Winscreen");
+
     }
 
     public void HighlightField(bool newHighlight, int x, int y)
