@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Winscreen : MonoBehaviour
 {
@@ -26,5 +27,11 @@ public class Winscreen : MonoBehaviour
             (sec > 9 ? sec.ToString() : "0" + sec.ToString());
         difficultyText.text = "difficulty: " + SudokuLauncher.launchDifficulty.ToString();
         scoreText.text = "score: " + Mathf.RoundToInt(10000 * (SudokuLauncher.launchDifficulty / SudokuManager.playTime)).ToString();
+        mistakesText.text = "mistakes: " + SudokuManager.playMistakes.ToString();
+    }
+
+    public void goToMenu()
+    {
+        SceneManager.LoadScene("Start");
     }
 }

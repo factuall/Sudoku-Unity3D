@@ -28,6 +28,7 @@ public class SudokuManager : MonoBehaviour
     Color fontGhostColor = new Color(0.64f, 0.64f, 0.64f, 1f);
     Color fontHighlitedColor = new Color(0.5f, 0f, 0.5f, 1f);
     Color fontCorrectAnswer = new Color(0.2f, 0.55f, 0.2f, 1f);
+    Color fontMistakeColor = new Color(0.8f, 0, 0);
 
     public int currentField = -1;
 
@@ -106,9 +107,17 @@ public class SudokuManager : MonoBehaviour
                 {
                     GameFields[updateY * 9 + updateX].content = Solve[updateX, updateY];
                     GameFields[updateY * 9 + updateX].FieldText.color = Color.black;
-                    GameFields[updateY * 9 + updateX].FieldText.color = (Solve[updateX, updateY] == Solution[updateX, updateY] &&
-                        Solve[updateX, updateY] != StartingSolved[updateX, updateY])
-                            ? fontCorrectAnswer  : fontNormalColor;
+                    if(Solve[updateX, updateY] != StartingSolved[updateX, updateY])
+                    {
+                        if (Solve[updateX, updateY] == Solution[updateX, updateY])
+                        {
+                            GameFields[updateY * 9 + updateX].FieldText.color = fontCorrectAnswer;
+                        }
+                        else
+                        {
+                            GameFields[updateY * 9 + updateX].FieldText.color = fontMistakeColor;
+                        }
+                    }
                     GameFields[updateY * 9 + updateX].FieldImage.color = normalColor;
                 }
                 
@@ -145,7 +154,13 @@ public class SudokuManager : MonoBehaviour
 
             HighlightField(false, currentField % 9, currentField / 9);
             GameFields[currentField].ghost = false;
-            
+            if (Solve[currentField % 9, currentField / 9] != StartingSolved[currentField % 9, currentField / 9])
+            {
+                if (Solve[currentField % 9, currentField / 9] != Solution[currentField % 9, currentField / 9])
+                {
+                    playMistakes++;
+                }
+            }
         }
         if (id != -1)
         {
@@ -161,7 +176,7 @@ public class SudokuManager : MonoBehaviour
             }
             undoBuffer = Solve[id % 9, id / 9];
         }
-            
+
         currentField = id;
 
         //solved check
