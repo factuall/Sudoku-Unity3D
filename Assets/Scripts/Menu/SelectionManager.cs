@@ -27,4 +27,10 @@ public class SelectionManager : MonoBehaviour
         float newX = (menuRect.anchoredPosition.x - ((page * -1) * menuRect.rect.width)) * Time.deltaTime * 8;
         menuRect.anchoredPosition = new Vector2(menuRect.anchoredPosition.x + (0 - newX), 0);
     }
+
+    public void changePage(bool forward)
+    {
+        if (forward && page < menuPages.Length - 1) page++;
+        if (!forward && page > 0) page--;
+    }
 }
