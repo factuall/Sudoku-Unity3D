@@ -24,6 +24,7 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        menusGrid.cellSize = new Vector2(mainRect.sizeDelta.x, mainRect.sizeDelta.y);
         float newX = (menuRect.anchoredPosition.x - ((page * -1) * menuRect.rect.width)) * Time.deltaTime * 8;
         menuRect.anchoredPosition = new Vector2(menuRect.anchoredPosition.x + (0 - newX), 0);
     }

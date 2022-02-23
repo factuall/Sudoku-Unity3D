@@ -30,8 +30,4 @@ public class Winscreen : MonoBehaviour
         mistakesText.text = "mistakes: " + SudokuManager.playMistakes.ToString();
     }
 
-    public void goToMenu()
-    {
-        SceneManager.LoadScene("Start");
-    }
 }
