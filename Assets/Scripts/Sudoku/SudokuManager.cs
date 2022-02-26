@@ -22,7 +22,7 @@ public class SudokuManager : MonoBehaviour
 
     public Color tint;
 
-    Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 155f / 255f);
+    Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 1);
     Color highlitedNumberColor = new Color(0.6f, 0.75f, 0.75f, 155f / 255f);
     Color normalColor = new Color(1f, 1f, 1f, 155f / 255f);
 
@@ -34,11 +34,15 @@ public class SudokuManager : MonoBehaviour
 
     public int currentField = -1;
 
+    public Color[] randomColors = new Color[80];
+
     int difficulty = SudokuLauncher.launchDifficulty;
 
     int[,] Solve = new int[9, 9];
     int[,] Solution = new int[9, 9];
     int[,] StartingSolved = new int[9, 9];
+
+    int[,] modeKillerGrid = new int[9, 9];
 
     bool gameReady = false;
     bool sumMode = true;
@@ -88,6 +92,12 @@ public class SudokuManager : MonoBehaviour
             GameFields[i].id = i;
             //GameFields[i].content = Solution[i];
         }
+
+        for (int color = 0; color < 80; color++)
+        {
+            randomColors[color] = randomColor();
+        }
+        if(sumMode) modeKillerGrid = modeKiller();
         
     }
 
@@ -137,6 +147,10 @@ public class SudokuManager : MonoBehaviour
                 GameFields[id].FieldImage.color = highlitedNumberColor;
                 GameFields[id].FieldText.color = fontHighlitedColor;
 
+            }
+            if (sumMode)
+            {
+                GameFields[id].fieldTintImage.color = randomColors[modeKillerGrid[id % 9, id / 9]];
             }
         }
     }
@@ -316,5 +330,65 @@ public class SudokuManager : MonoBehaviour
     {
         SceneManager.LoadScene("Start"); 
     }
+
+    public int[,] modeKiller()
+    {
+        int[,] groups = new int[9, 9];
+        int groupID = 1;
+        for (int y = 0; y < 9; y++)
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                int id = y * 9 + x;
+                if(groups[x, y] == 0)
+                {
+                    groups[x, y] = groupID;
+                    int xx = x, yy = y;
+                    int groupMemebers = 1;
+                    bool goFurther = true;
+                    for (int z = 0; z < 9; z++)
+                    {
+                        int face = UnityEngine.Random.Range(0,4);
+                        //right down left up
+                        int destX = xx + (face == 0 ? 1 :
+                                        face == 2 ? -1 : 0);
+                        int destY = yy + (face == 1 ? 1 :
+                                        face == 3 ? -1 : 0);
+                        if (destX == -1 || destX == 9 || destY == -1 || destY == 9) continue;
+                        int possible = 0;
+                        for (int jajebie = 0; jajebie < 4; jajebie++)
+                        {
+                            int checkX = destX + (jajebie == 0 ? 1 :
+                                jajebie == 2 ? -1 : 0);
+                            int checkY = destY + (jajebie == 1 ? 1 :
+                                jajebie == 3 ? -1 : 0);
+                            if (checkX == -1 || checkX == 9 || checkY == -1 || checkY == 9) continue;
+                            if (groups[checkX, checkY] == groupID) possible++;
+                        }
+                        Debug.Log(possible.ToString());
+                        if (possible > 1) continue;
+                        if (groups[destX, destY] != 0) continue;
+                        groups[destX, destY] = groupID;
+                        xx = destX; yy = destY;
+                        if (UnityEngine.Random.Range(0, groupMemebers) > 0) break;
+                        groupMemebers++;
+                    }
+
+                    groupID++;
+                    
+                }
+            }
+
+        }
+        return groups;
+    }
+    public Color randomColor() {
+        return new Color(
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f),
+            UnityEngine.Random.Range(0f, 1f),
+            0.5f);
+    }
+
 
 }

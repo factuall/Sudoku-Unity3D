@@ -10,16 +10,16 @@ public class NumberField : MonoBehaviour
     public int id = 0;
     public SudokuManager Manager;
     public Text FieldText;
-    public Image FieldImage;
-    public RawImage fieldTintImage;
+    public RawImage FieldImage;
+    public Image fieldTintImage;
     public bool highlighted;
 
     // Start is called before the first frame update
     void Start()
     {
         FieldText = this.GetComponentInChildren<Text>();
-        FieldImage = this.GetComponent<Image>();
-        fieldTintImage = this.GetComponentInChildren<RawImage>();
+        FieldImage = this.GetComponentInChildren<RawImage>();
+        fieldTintImage = this.GetComponent<Image>(); 
     }
 
     // Update is called once per frame
