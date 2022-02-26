@@ -1099,6 +1099,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   NSPrefab: {fileID: 8087243928119265094, guid: 074b67a9ae012c8499898f8ac56ba7ec, type: 3}
+  tint: {r: 1, g: 0, b: 0.56635475, a: 0.043137256}
   currentField: -1
 --- !u!4 &1099093813
 Transform:

@@ -20,8 +20,10 @@ public class SudokuManager : MonoBehaviour
     public NumberAction[] NumberSelect = new NumberAction[9];
     public GameObject NSPrefab;
 
-    Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
-    Color highlitedNumberColor = new Color(0.6f, 0.75f, 0.75f, 1f);
+    public Color tint;
+
+    Color highlitedColor = new Color(0.75f, 0.75f, 0.75f, 155f / 255f);
+    Color highlitedNumberColor = new Color(0.6f, 0.75f, 0.75f, 155f / 255f);
     Color normalColor = new Color(1f, 1f, 1f, 155f / 255f);
 
     Color fontNormalColor = Color.black;
@@ -39,6 +41,7 @@ public class SudokuManager : MonoBehaviour
     int[,] StartingSolved = new int[9, 9];
 
     bool gameReady = false;
+    bool sumMode = true;
 
     // Start is called before the first frame update
     void Start()
@@ -134,8 +137,7 @@ public class SudokuManager : MonoBehaviour
                 GameFields[id].FieldImage.color = highlitedNumberColor;
                 GameFields[id].FieldText.color = fontHighlitedColor;
 
-            }   
-            
+            }
         }
     }
 
