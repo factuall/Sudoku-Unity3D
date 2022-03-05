@@ -45,7 +45,7 @@ public class SudokuManager : MonoBehaviour
     int[,] modeKillerGrid = new int[9, 9];
 
     bool gameReady = false;
-    bool sumMode = true;
+    bool sumMode = false;
 
     // Start is called before the first frame update
     void Start()
@@ -167,29 +167,15 @@ public class SudokuManager : MonoBehaviour
         
         if(currentField != -1)
         {
-
             HighlightField(false, currentField % 9, currentField / 9);
-            GameFields[currentField].ghost = false;
-            if (Solve[currentField % 9, currentField / 9] != StartingSolved[currentField % 9, currentField / 9])
-            {
-                if (Solve[currentField % 9, currentField / 9] != Solution[currentField % 9, currentField / 9])
-                {
+            if (!GameFields[currentField].ghost &&
+                Solve[currentField % 9, currentField / 9] != StartingSolved[currentField % 9, currentField / 9] &&
+                Solve[currentField % 9, currentField / 9] != Solution[currentField % 9, currentField / 9]) 
                     playMistakes++;
-                }
-            }
         }
         if (id != -1)
         {
-
             highlightNumberBuffer = GameFields[id].content;
-            if (currentField != -1)
-            {
-                if (GameFields[currentField].ghost)
-                {
-                    Solve[currentField % 9, currentField / 9] = GameFields[currentField].content;
-                    GameFields[currentField].ghost = false;
-                }
-            }
             undoBuffer = Solve[id % 9, id / 9];
         }
 
@@ -198,7 +184,7 @@ public class SudokuManager : MonoBehaviour
         //solved check
         for (int i = 0; i < 81; i++)
         {
-            if (Solve[i % 9, i / 9] != Solution[i % 9, i / 9]) return;
+            if (Solve[i % 9, i / 9] != Solution[i % 9, i / 9] || GameFields[i].ghost) return;
         }
 
         SceneManager.LoadScene("Winscreen");
@@ -228,13 +214,23 @@ public class SudokuManager : MonoBehaviour
         {
             for (int x = 0; x < 9; x++)
             { 
-                if (y * 9 + x == currentField && !GameFields[currentField].ghost) Solve[x, y] = id + 1;
+                if (y * 9 + x == currentField) Solve[x, y] = id + 1;
                 else if(currentField != -1) GameFields[currentField].content = id + 1;
                 highlightNumberBuffer = id+1;
             }
         }
      
     }
+
+    public void AcceptPressed()
+    {
+        if (currentField != -1) {
+            GameFields[currentField].ghost = false;
+            FieldPressed(-1);
+            
+        }
+    }
+
 
     public void CancelPressed()
     {
@@ -249,10 +245,15 @@ public class SudokuManager : MonoBehaviour
 
     public void GhostPressed()
     {
+        int isntMistake = playMistakes;
         int prevField = currentField;
+        if(currentField != -1)
+        {
+            GameFields[prevField].ghost = true;
+        }
         FieldPressed(-1);
         GameFields[prevField].ghost = true;
-
+        playMistakes = isntMistake; 
     }
 
     int[,] Generator()
